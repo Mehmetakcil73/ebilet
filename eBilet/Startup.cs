@@ -2,12 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Globalization;
+using eBilet.Data;
+using eBilet.Data.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Localization;
 
 namespace eBilet
 {
@@ -23,7 +28,27 @@ namespace eBilet
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var supportedCultures = new[]
+            {
+                new CultureInfo("tr-TR"),    // Türkçe (Türkiye)
+                new CultureInfo("en-US"),    // Ýngilizce (ABD) – isteðe baðlý
+            };
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                // Kullanýlamazsa varsayýlan olarak tr-TR kullan
+                options.DefaultRequestCulture = new RequestCulture("tr-TR", "tr-TR");      // :contentReference[oaicite:0]{index=0}
+                options.SupportedCultures = supportedCultures;                             // sayý, tarih formatý için
+                options.SupportedUICultures = supportedCultures;                           // UI çevirileri için
+            });
+
+            //DbContext Configuration
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnectionString")));
             services.AddControllersWithViews();
+
+            //Services Configuration
+            services.AddScoped<IActorsService, ActorsService>();
+                services.AddControllersWithViews();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +77,9 @@ namespace eBilet
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            
+            //Seed database
+            AppDbInitializer.Seed(app);
         }
     }
 }
