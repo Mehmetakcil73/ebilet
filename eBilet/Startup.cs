@@ -47,7 +47,9 @@ namespace eBilet
 
             //Services Configuration
             services.AddScoped<IActorsService, ActorsService>();
-                services.AddControllersWithViews();
+            services.AddScoped<IProducersService, ProducersServices>();
+
+            services.AddControllersWithViews();
 
         }
 
