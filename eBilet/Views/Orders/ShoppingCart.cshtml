@@ -1,0 +1,68 @@
+﻿@using eBilet.Data.ViewModels
+@model ShoppingCartVM
+
+@{
+	ViewData["Title"] = "Shopping cart summary";
+}
+
+<div class="row">
+	<div class="col-md-8 offset-2">
+		<div class="text-center">
+			<h2>You shopping cart summary</h2>
+		</div>
+
+		<table class="table">
+			<thread>
+				<tr>
+					<th>Selected amount</th>
+					<th>Movie</th>
+					<th>Price</th>
+					<th>Subtotal</th>
+					<th></th>
+				</tr>
+			</thread>
+			<tbody>
+				@foreach(var item in Model.ShoppingCart.ShoppingCartItems)
+				{
+					<tr>
+						<td class="align-midle">@item.Amount</td>
+						<td class="align-midle">@item.Movie.Name</td>
+						<td class="align-midle">@item.Movie.Price</td>
+						<td class="align-midle">@((item.Amount*item.Movie.Price).ToString("c"))</td>
+						<td class="align-midle">
+							<a class="text-danger" asp-controller="Orders" asp-action="RemoveItemFromShoppingCart"
+								asp-route-id="@item.Movie.Id">
+								<i class="bi bi-cart-dash"></i>							
+							</a>
+
+							<a class="text-success" asp-controller="Orders" asp-action="AddItemShoppingCart"
+								asp-route-id="@item.Movie.Id">
+								<i class="bi bi-cart-plus"></i>							
+							</a>
+
+						</td>
+					</tr>
+				}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="2"></td>
+					<td><b>Total:</b></td>
+					<td>
+						@Model.ShoppingCartTotal.ToString("c")
+					</td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</table>
+
+		<div class="text-center">
+			<div class="btn-group">
+				<a class="btn btn-outline-success" asp-controller="Movie" asp-action="Index">
+					Add more items
+				</a>
+			</div>
+		</div>
+
+	</div>
+</div>

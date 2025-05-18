@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using eBilet.Data.Enums;
+using eBilet.Data.Base;
+using eBilet.Data;
 
 namespace eBilet.Models
 {
-    public class Movie
+    public class Movie:IEntityBase
     {
         public int Id { get; set; }
         public string Name { get; set; }
