@@ -1,6 +1,7 @@
 ﻿using eBilet.Data;
 using eBilet.Data.Services;
 using eBilet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace eBilet.Controllers
 {
+    [Authorize]
     public class MoviesController : Controller
     {
         private readonly IMoviesService _service;
@@ -18,11 +20,14 @@ namespace eBilet.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> Index()
+		[AllowAnonymous]
+		public async Task<IActionResult> Index()
         {
             var allMovies = await _service.GetAllAsync(n => n.Cinema);
             return View(allMovies);
         }
+
+		[AllowAnonymous]
 		public async Task<IActionResult> Filter(string searchString)
 		{
 			var allMovies = await _service.GetAllAsync(n => n.Cinema);
@@ -37,6 +42,7 @@ namespace eBilet.Controllers
 		}
 
 		//GET: Movies/Details/1
+		[AllowAnonymous]
 		public async Task<IActionResult> Details(int id)
         {
             var movieDetail = await _service.GetMovieByIdAsync(id);

@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using eBilet.Data;
 using eBilet.Data.Services;
 using eBilet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace eBilet.Controllers
 {
+	[Authorize]
     public class ProducersController : Controller
     {
         private readonly IProducersService _service;
@@ -15,14 +17,17 @@ namespace eBilet.Controllers
         public ProducersController(IProducersService service)
         {
             _service = service;
-        } 
-        public async Task<IActionResult> Index()
+        }
+
+		[AllowAnonymous]
+		public async Task<IActionResult> Index()
         {
             var allProducers = await _service.GetAllAsync();
             return View(allProducers);
         }
 
 		//GET: producers/details/1
+		[AllowAnonymous]
 		public async Task<IActionResult> Details(int id)
 		{
 			var producerDetails = await _service.GetByIdAsync(id);

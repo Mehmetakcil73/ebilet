@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using eBilet.Data.Services;
 using eBilet.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eBilet.Controllers
 {
+    [Authorize]
     public class CinemasController : Controller
     {
         private readonly ICinemasService _service;
@@ -15,7 +17,9 @@ namespace eBilet.Controllers
         {
             _service = service;
         }
-        public async Task<IActionResult> Index()
+
+		[AllowAnonymous]
+		public async Task<IActionResult> Index()
         {
             var allCinemas = await _service.GetAllAsync();
             return View(allCinemas);
@@ -35,8 +39,9 @@ namespace eBilet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //GET Cinemas/Details/1
-        public async Task<IActionResult> Details(int id)
+		//GET Cinemas/Details/1
+		[AllowAnonymous]
+		public async Task<IActionResult> Details(int id)
         {
             var cinemaDetails = await _service.GetByIdAsync(id);
             if (cinemaDetails == null) return View("NotFound");

@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using eBilet.Data;
 using eBilet.Data.Services;
 using eBilet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eBilet.Controllers
 {
+    [Authorize]
     public class ActorsController : Controller
     {
         private readonly IActorsService _service;
@@ -15,6 +17,8 @@ namespace eBilet.Controllers
         {
             _service = service;
         }
+
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var data = await _service.GetAllAsync();
@@ -39,8 +43,9 @@ namespace eBilet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //Get: Actors/Details/1
-        public async Task<IActionResult> Details(int id)
+		//Get: Actors/Details/1
+		[AllowAnonymous]
+		public async Task<IActionResult> Details(int id)
         {
             var actorDetails = await _service.GetByIdAsync(id);
 

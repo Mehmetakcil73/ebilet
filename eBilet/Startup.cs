@@ -15,6 +15,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using eBilet.Data.Cart;
+using eBilet.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eBilet
 {
@@ -31,15 +34,15 @@ namespace eBilet
         {
             var supportedCultures = new[]
             {
-                new CultureInfo("tr-TR"),    // Türkçe (Türkiye)
-                new CultureInfo("en-US"),    // Ýngilizce (ABD) – isteðe baðlý
+                new CultureInfo("tr-TR"),    // TÃ¼rkÃ§e (TÃ¼rkiye)
+                new CultureInfo("en-US"),    // Ä°ngilizce (ABD) Ä°steÄŸe baÄŸlÄ±
             };
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                // Kullanýlamazsa varsayýlan olarak tr-TR kullan
+                // KullanÄ±lamazsa varsayÄ±lan olarak tr-TR kullan
                 options.DefaultRequestCulture = new RequestCulture("tr-TR", "tr-TR");      // :contentReference[oaicite:0]{index=0}
-                options.SupportedCultures = supportedCultures;                             // sayý, tarih formatý için
-                options.SupportedUICultures = supportedCultures;                           // UI çevirileri için
+                options.SupportedCultures = supportedCultures;                             // sayÄ±, tarih formatÄ± iÃ§in
+                options.SupportedUICultures = supportedCultures;                           // UI Ã‡evirileri iÃ§in
             });
 
             //DbContext Configuration
@@ -56,7 +59,14 @@ namespace eBilet
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));
 
+            //Authentication and authorization
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+            services.AddMemoryCache();
             services.AddSession();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
 
             services.AddControllersWithViews();
 		}
@@ -80,6 +90,8 @@ namespace eBilet
             app.UseRouting();
             app.UseSession();
 
+            //Authentication & Authorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -91,6 +103,7 @@ namespace eBilet
             
             //Seed database
             AppDbInitializer.Seed(app);
+            AppDbInitializer.SeedUsersAndRolesAsync(app).Wait();
         }
     }
 }
