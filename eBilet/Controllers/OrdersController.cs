@@ -16,10 +16,11 @@ namespace eBilet.Controllers
             _moviesService = moviesService;
 			_shoppingCart = shoppingCart;
         }
-        public IActionResult Index()
+        public IActionResult ShoppingCart()
 		{
 			var items = _shoppingCart.GetShoppingCartItems();
 			_shoppingCart.ShoppingCartItems = items;
+
 			var response = new ShoppingCartVM()
 			{
 				ShoppingCart = _shoppingCart,
@@ -36,6 +37,17 @@ namespace eBilet.Controllers
 			if(item !=null)
 			{
 				_shoppingCart.AddItemCart(item);
+			}
+			return RedirectToAction(nameof(ShoppingCart));
+		}
+
+		public async Task<RedirectToActionResult> RemoveItemFromShoppingCart(int id)
+		{
+			var item = await _moviesService.GetMovieByIdAsync(id);
+
+			if(item != null)
+			{
+				_shoppingCart.RemoveItemFromCart(item);
 			}
 			return RedirectToAction(nameof(ShoppingCart));
 		}
