@@ -48,9 +48,10 @@ namespace eBilet
 
             //Services Configuration
             services.AddScoped<IActorsService, ActorsService>();
-            services.AddScoped<IProducersService, ProducersServices>();
+            services.AddScoped<IProducersService, ProducersService>();
             services.AddScoped<IMoviesService, MoviesService>();
             services.AddScoped<ICinemasService, CinemasService>();
+            services.AddScoped<IOrdersService, OrdersService>();
 			
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));

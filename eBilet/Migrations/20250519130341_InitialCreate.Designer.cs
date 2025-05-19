@@ -10,8 +10,8 @@ using eBilet.Data;
 namespace eBilet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250512165314_ShoppingCarItems_Added")]
-    partial class ShoppingCarItems_Added
+    [Migration("20250519130341_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -159,9 +159,6 @@ namespace eBilet.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CinemaId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("MovieId")
                         .HasColumnType("integer");
 
@@ -173,7 +170,9 @@ namespace eBilet.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CinemaId");
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderItems");
                 });
@@ -268,11 +267,15 @@ namespace eBilet.Migrations
                 {
                     b.HasOne("eBilet.Models.Movie", "Movie")
                         .WithMany()
-                        .HasForeignKey("CinemaId");
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("eBilet.Models.Order", "Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("CinemaId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Movie");
 

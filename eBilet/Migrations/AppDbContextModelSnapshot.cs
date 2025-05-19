@@ -157,9 +157,6 @@ namespace eBilet.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CinemaId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("MovieId")
                         .HasColumnType("integer");
 
@@ -171,7 +168,9 @@ namespace eBilet.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CinemaId");
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderItems");
                 });
@@ -266,11 +265,15 @@ namespace eBilet.Migrations
                 {
                     b.HasOne("eBilet.Models.Movie", "Movie")
                         .WithMany()
-                        .HasForeignKey("CinemaId");
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("eBilet.Models.Order", "Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("CinemaId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Movie");
 
